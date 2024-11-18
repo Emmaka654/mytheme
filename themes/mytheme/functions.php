@@ -35,3 +35,9 @@ function register_post_types(){
 }
 
 add_action('init', 'register_post_types');
+
+function theme_enqueue_styles() {
+    wp_enqueue_style('bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
+}
+
+add_action('wp_enqueue_scripts', 'theme_enqueue_styles');

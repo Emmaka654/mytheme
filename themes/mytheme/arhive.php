@@ -13,7 +13,8 @@
                     </div>
                 </div>
             </div>
-        <?php endwhile; else : ?>
+        <?php endwhile;
+        else : ?>
             <p><?php esc_html_e('Sorry, no posts found.', 'mytheme'); ?></p>
         <?php endif; ?>
     </div>

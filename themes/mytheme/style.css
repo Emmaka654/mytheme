@@ -9,3 +9,13 @@ License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: mytheme
 */
+
+#cart-popup {
+    display: none;
+    position: fixed;
+    top: 30px;
+    background-color: white;
+    z-index: 2;
+    width: 70%;
+    height: 100%;
+}

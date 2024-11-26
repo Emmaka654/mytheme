@@ -9,7 +9,13 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand mx-auto" href="<?php echo home_url(); ?>">Homepage</a>
+        <a class="navbar-brand mx-auto" href="<?php echo home_url(); ?>"><?php echo get_bloginfo('name'); ?></a>
+        <a href="<?php echo home_url('/products/'); ?>">Каталог</a>
+        <a href="#account">Личный кабинет</a>
+        <a href="#" id="cart-icon">
+            <img src="http://localhost/wp/wp-content/uploads/2024/11/cart-1.png" alt="Корзина" style="width: 50px; height: auto;">
+            <span id="cart-count">0</span>
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -27,4 +33,14 @@
     </div>
 </nav>
 
-
+<!-- Всплывающее окно корзины -->
+<div class="cart-popup" id="cart-popup">
+    <div class="cart-header">
+        <h2>Корзина</h2>
+        <button id="close-cart-popup">&times;</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-footer">
+        <button id="checkout-button">Оформить заказ</button>
+    </div>
+</div>

@@ -3,12 +3,14 @@ get_header(); // Подключаем заголовок темы
 
 if (have_posts()) : while (have_posts()) : the_post(); ?>
 
-    <div class="product-container">
+    <?php $product_id = get_the_ID();?>
+    <div class="product-container" data-product-id="<?php echo esc_attr($product_id); ?>">
         <!-- Главная картинка товара -->
         <div class="product-image">
             <?php the_post_thumbnail('full'); // Выводим изображение товара ?>
         </div>
 
+        <p></p>
         <!-- Заголовок товара -->
         <h1 class="product-title"><?php the_title(); ?></h1>
 
@@ -31,7 +33,8 @@ if (have_posts()) : while (have_posts()) : the_post(); ?>
         </div>
 
         <!-- Кнопка "В корзину" -->
-        <button class="add-to-cart-button">В корзину</button>
+        <?php $product_id = (string)get_the_ID();?>
+        <button class="add-to-cart-button" data-product-id="<?php echo esc_attr($product_id); ?>">В корзину</button>
 
         <!-- Комментарии и форма комментариев -->
         <div class="comments-section">

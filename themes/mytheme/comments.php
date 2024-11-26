@@ -41,5 +41,4 @@
     );
     comment_form($args);
     ?>
-
 </div>

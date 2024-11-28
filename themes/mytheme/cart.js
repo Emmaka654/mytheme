@@ -184,3 +184,54 @@ function removeItem(productId) {
     setCookie('cart', JSON.stringify(cart), 7); // Обновляем куки
     updateCartDisplay();// Обновляем отображение корзины
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const checkoutButton = document.querySelector('#checkout-button');
+    const orderForm = document.querySelector('#order-form');
+    const closeForm = document.getElementById('close-form');
+
+    checkoutButton.addEventListener('click', function () {
+        orderForm.style.display = orderForm.style.display === 'block' ? 'none' : 'block';
+    });
+
+    closeForm.addEventListener('click', function () {
+        orderForm.style.display = 'none';
+    });
+});
+
+jQuery(document).ready(function ($) {
+    $('#submit-button').on('click', function (e) {
+        e.preventDefault();
+
+        const formData = $(this).closest('form').serialize();
+        const cartCookie = getCookie('cart') || '{}';
+        const cart = JSON.parse(cartCookie);
+
+        $.ajax({
+            url: ajax_object.ajax_url,
+            method: 'POST',
+            data: {
+                action: 'submit_order', // Имя действия для обработки на сервере
+                formData: formData, // Данные формы
+                cart: cart // Данные о товарах в корзине
+            },
+            success: function (response) {
+                if (typeof response === 'string') {
+                    response = JSON.parse(response);
+                }
+                if (response.success) {
+                    alert(response.message); // Выводим ответ от сервера
+                    $('#order-form')[0].reset(); // Сбрасываем форму
+                    deleteCookie('cart');
+                    updateCartDisplay();
+                    document.querySelector('#order-form').style.display = 'none';
+                } else {
+                    alert('Произошла ошибка. Проверьте, выбрали, ли вы товары. А также ввели ли вы все данные');
+                }
+            },
+            error: function () {
+                alert('Произошла ошибка. Попробуйте еще раз.');
+            }
+        });
+    });
+});

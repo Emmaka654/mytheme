@@ -19,3 +19,23 @@ Text Domain: mytheme
     width: 70%;
     height: 100%;
 }
+
+#order-form {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    background-color: lightgrey;
+    z-index: 2;
+    width: 70%;
+    height: 50%;
+    transform: translate(-50%, -50%);
+}
+
+label {
+    display: block;
+}
+
+input {
+    width: 100%;
+}

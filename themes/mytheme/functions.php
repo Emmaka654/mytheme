@@ -1,5 +1,6 @@
 <?php
-function mytheme_setup(){
+function mytheme_setup()
+{
     // Подключение поддержки миниатюр
     add_theme_support('post-thumbnails');
 
@@ -38,6 +39,25 @@ function register_post_types()
 }
 
 add_action('init', 'register_post_types');
+
+function register_order_post_type()
+{
+    register_post_type('order',
+        array(
+            'labels' => array(
+                'name' => __('Orders'),
+                'singular_name' => __('Order')
+            ),
+            'public' => true,
+            'has_archive' => true,
+            'rewrite' => array('slug' => 'orders'),
+            'supports' => array('title', 'editor', 'thumbnail', 'comments'),
+            'menu_icon' => 'dashicons-list-view', // Иконка для меню
+        )
+    );
+}
+
+add_action('init', 'register_order_post_type');
 
 function enqueue_custom_scripts()
 {
@@ -131,3 +151,48 @@ function get_cart_items()
     echo json_encode($response);
     exit;
 }
+
+function submit_order()
+{
+    parse_str($_POST['formData'], $form_data);
+    $cart = $_POST['cart'];
+
+    // Получаем данные из формы
+    $fio_user = sanitize_text_field($form_data['fio_user']);
+    $email_user = sanitize_email($form_data['email_user']);
+    $products = array_keys($cart);
+
+    // Проверяем, что данные были переданы
+    if (!empty($fio_user) && !empty($email_user) && !empty($products)) {
+        // Создаем новый заказ (пост типа ORDER)
+        $order_id = wp_insert_post(array(
+            'post_title' => 'Заказ от ' . $fio_user,
+            'post_type' => 'order',
+            'post_status' => 'publish',
+        ));
+
+        // Сохраняем мета поля
+        if ($order_id) {
+            update_field('fio_user', $fio_user, $order_id);
+            update_field('email_user', $email_user, $order_id);
+            update_field('products', $products, $order_id);
+
+            $response = [
+                'success' => true,
+                'message' => 'Заказ успешно оформлен!'
+            ];
+            echo json_encode($response);
+        } else {
+            wp_send_json_error('Failed to create order. Please try again.');
+            return;
+        }
+    } else {
+        wp_send_json_error('Incorrect data.');
+        return;
+    }
+
+    exit();
+}
+
+add_action('wp_ajax_submit_order', 'submit_order');
+add_action('wp_ajax_nopriv_submit_order', 'submit_order');

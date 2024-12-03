@@ -33,7 +33,7 @@ if (have_posts()) : while (have_posts()) : the_post(); ?>
         </div>
 
         <!-- Кнопка "В корзину" -->
-        <?php $product_id = (string)get_the_ID();?>
+        <?php $product_id = get_the_ID();?>
         <button class="add-to-cart-button" data-product-id="<?php echo esc_attr($product_id); ?>">В корзину</button>
 
         <!-- Комментарии и форма комментариев -->

@@ -161,7 +161,6 @@ function submit_order()
     $fio_user = sanitize_text_field($form_data['fio_user']);
     $email_user = sanitize_email($form_data['email_user']);
     $products = array_keys($cart);
-
     // Проверяем, что данные были переданы
     if (!empty($fio_user) && !empty($email_user) && !empty($products)) {
         // Создаем новый заказ (пост типа ORDER)

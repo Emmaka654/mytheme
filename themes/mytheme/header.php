@@ -13,7 +13,7 @@
         <a href="<?php echo home_url('/products/'); ?>">Каталог</a>
         <a href="#account">Личный кабинет</a>
         <a href="#" id="cart-icon">
-            <img src="http://localhost/wp/wp-content/uploads/2024/11/cart-1.png" alt="Корзина"
+            <img src="<?php echo home_url('/wp-content/uploads/2024/11/cart-1.png'); ?>" alt="Корзина"
                  style="width: 50px; height: auto;">
             <span id="cart-count">0</span>
         </a>
@@ -34,29 +34,3 @@
         </div>
     </div>
 </nav>
-
-<!-- Всплывающее окно корзины -->
-<div class="cart-popup" id="cart-popup">
-    <div class="cart-header">
-        <h2>Корзина</h2>
-        <button id="close-cart-popup">&times;</button>
-    </div>
-    <div class="cart-items" id="cart-items"></div>
-    <div class="cart-footer">
-        <button id="checkout-button">Оформить заказ</button>
-    </div>
-</div>
-
-<form id="order-form">
-    <h3>Введите свои данные для оформления заказа</h3>
-    <label for="fio_user">ФИО пользователя:</label>
-    <input type="text" id="fio_user" name="fio_user" required>
-
-    <label for="email_user">Email пользователя:</label>
-    <input type="email" id="email_user" name="email_user" required>
-
-    <button type="submit" id="submit-button">Отправить</button>
-    <button type="button" id="close-form">Отмена</button>
-</form>
-
-<div id="order-response"></div>

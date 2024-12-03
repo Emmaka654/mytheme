@@ -43,8 +43,8 @@ jQuery(document).ready(function ($) {
     $('.add-to-cart-button').on('click', function (e) {
         e.preventDefault();
 
-        var productId = $(this).data('product-id');
-        var quantity = 1;
+        const productId = $(this).data('product-id');
+        const quantity = 1;
 
         $.ajax({
             url: ajax_object.ajax_url,
@@ -122,7 +122,7 @@ function displayCartItems(items) {
     const list = document.createElement('ul');
     items.forEach(item => {
         const listItem = document.createElement('li');
-        var id = item.id;
+        const id = item.id;
         listItem.textContent = 'Товар: ' + item.title + ', Цена: ' + item.price + ', Количество: ' + item.quantity;
         list.appendChild(listItem);
 

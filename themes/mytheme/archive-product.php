@@ -54,6 +54,15 @@ if ($query->have_posts()) : ?>
     <p><?php _e('Товары не найдены.'); ?></p>
 <?php endif; ?>
 
+<aside class="sidebar">
+    <?php
+    // Выводим сайдбар
+    if (function_exists('dynamic_sidebar') && is_active_sidebar('archive_products_sidebar')) {
+        dynamic_sidebar('archive_products_sidebar');
+    }
+    ?>
+</aside>
+
 <?php
 // Сбрасываем глобальную переменную поста
 wp_reset_postdata();

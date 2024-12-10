@@ -29,6 +29,7 @@ if (have_posts()) : while (have_posts()) : the_post(); ?>
                     echo implode(', ', $sizes)
                     ?></li>
                 <li>Цвет: <?php echo get_field('color'); ?></li>
+                <li>Рейтинг: <?php echo get_field('product_rating'); ?></li>
             </ul>
         </div>
 

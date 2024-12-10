@@ -42,7 +42,7 @@ add_action('init', 'register_post_types');
 
 function register_order_post_type()
 {
-    register_post_type('order',
+    register_post_type('custom_order',
         array(
             'labels' => array(
                 'name' => __('Orders'),
@@ -50,7 +50,7 @@ function register_order_post_type()
             ),
             'public' => true,
             'has_archive' => true,
-            'rewrite' => array('slug' => 'orders'),
+            'rewrite' => array('slug' => 'custom_orders'),
             'supports' => array('title', 'editor', 'thumbnail', 'comments'),
             'menu_icon' => 'dashicons-list-view', // Иконка для меню
         )
@@ -71,6 +71,23 @@ function enqueue_custom_scripts()
 }
 
 add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
+
+// Создаем сайдбар
+function my_custom_sidebar()
+{
+    register_sidebar(array(
+        'name' => 'Сайдбар архива товаров',
+        'id' => 'archive_products_sidebar',
+        'before_widget' => '<div id="%1$s" class="widget %2$s">',
+        'after_widget' => '</div>',
+        'before_title' => '<h2 class="widget-title">',
+        'after_title' => '</h2>',
+    ));
+}
+
+add_action('init', 'my_custom_sidebar'); // Событие, которое срабатывает, когда инициализируются виджеты
+
+require_once get_template_directory() . '/product-rating-widget.php';
 
 // Добавляем товар в корзину
 add_action('wp_ajax_add_to_cart', 'add_to_cart');
@@ -166,7 +183,7 @@ function submit_order()
         // Создаем новый заказ (пост типа ORDER)
         $order_id = wp_insert_post(array(
             'post_title' => 'Заказ от ' . $fio_user,
-            'post_type' => 'order',
+            'post_type' => 'custom_order',
             'post_status' => 'publish',
         ));
 

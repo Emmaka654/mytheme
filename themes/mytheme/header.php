@@ -21,6 +21,7 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <?php echo custom_auth_buttons(); // Вызов функции для отображения кнопок ?>
         <div class="collapse navbar-collapse" id="navbarNav">
             <?php
             wp_nav_menu(array(

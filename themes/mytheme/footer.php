@@ -1,7 +1,8 @@
 <footer class="footer">
     <div class="container">
         <p class="text-center" style="white-space: pre;">&copy; <?php echo date('Y'); ?> Все права защищены.</p>
-        <p class="text-center"><a href="<?php echo esc_url(home_url('/privacy-policy')); ?>">Политика конфиденциальности</a></p>
+        <p class="text-center"><a href="<?php echo esc_url(home_url('/privacy-policy')); ?>">Политика
+                конфиденциальности</a></p>
     </div>
 </footer>
 
@@ -33,4 +34,7 @@
 </form>
 
 <div id="order-response"></div>
+
+<div id="registration-container" style="display: none;"><?php custom_registration_function(); ?></div>
+<div id="authorization-container" style="display: none;"><?php custom_authorization_function(); ?></div>
 </html>

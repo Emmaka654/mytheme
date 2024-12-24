@@ -66,7 +66,8 @@ function enqueue_custom_scripts()
 
     // Передаем переменную ajax_object в скрипт
     wp_localize_script('cart-script', 'ajax_object', array(
-        'ajax_url' => admin_url('admin-ajax.php')
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wp_rest')
     ));
 }
 
@@ -212,3 +213,99 @@ function submit_order()
 
 add_action('wp_ajax_submit_order', 'submit_order');
 add_action('wp_ajax_nopriv_submit_order', 'submit_order');
+
+function get_user_email()
+{
+    if (!is_user_logged_in()) {
+        wp_send_json_error(array('message' => 'Пользователь не авторизован'));
+    }
+
+    $user = wp_get_current_user();
+    $email = $user->user_email;
+    wp_send_json_success(array('email' => $email));
+}
+
+add_action('wp_ajax_get_user_email', 'get_user_email');
+add_action('wp_ajax_nopriv_get_user_email', 'get_user_email');
+
+function add_account_menu_item($items, $args)
+{
+    if (is_user_logged_in()) {
+        $items .= '<li><a href="' . home_url('/личный-кабинет/') . '">Личный кабинет</a></li>';
+    }
+    return $items;
+}
+
+add_filter('wp_nav_menu_items', 'add_account_menu_item', 20, 2);
+
+// создание маршрута
+add_action('rest_api_init', function () {
+
+    // пространство имен
+    // Пространство имени должно состоять из двух частей: vendor/package, где vendor - это поставщик, а package - это версия кода указанного поставщика.
+    $namespace = 'custom/v1';
+
+    // маршрут
+    $route = '/orders/';
+
+    // параметры конечной точки (маршрута)
+    $route_params = [
+        'methods' => 'GET',
+        //callback — функция обратного вызова для ответа на запрос
+        'callback' => 'get_user_orders',
+
+        // permission_callback — функцию обратного вызова для проверки права доступа к конечной точке.
+        'permission_callback' => function ($request) {
+            // только авторизованный юзер имеет доступ к эндпоинту
+            return is_user_logged_in();
+        },
+    ];
+
+    register_rest_route($namespace, $route, $route_params);
+});
+
+function get_user_orders(WP_REST_Request $request)
+{
+    if (!is_user_logged_in()) {
+        return new WP_Error('not_logged_in', 'Пользователь не авторизован', array('status' => 401));
+    }
+
+    $user = wp_get_current_user();
+    $email = $user->user_email;
+    // Проверяем email из запроса
+    if ($request->get_header('email') !== $email) {
+        return new WP_Error('invalid_email', 'Email не соответствует текущему пользователю', array('status' => 402));
+    }
+
+    $args = array(
+        'post_type' => 'custom_order',
+        'meta_query' => array(
+            array(
+                'key' => 'email_user', // Ключ метаполя
+                'value' => $email,
+                'compare' => '='
+            )
+        )
+    );
+
+    $orders = get_posts($args);
+    $response_data = array(); // Массив для хранения данных о заказах
+
+    // Проверяем, есть ли заказы
+    if (!empty($orders)) {
+        foreach ($orders as $order) {
+            $order_id = $order->ID; // ID заказа
+            $order_date = get_the_date('Y-m-d H:i:s', $order_id);
+            $products = get_post_meta($order_id, 'products', true);
+            $status = get_post_meta($order_id, 'order_status', true);
+            $response_data[] = array(
+                'order_id' => $order_id,
+                'order_date' => $order_date,
+                'products' => $products,
+                'status' => $status);
+        }
+        return new WP_REST_Response($response_data, 200); // Возвращаем массив заказов
+    } else {
+        return new WP_REST_Response(array('message' => 'Заказ с таким email не найден.'), 404); // Если заказы не найдены
+    }
+}

@@ -200,6 +200,30 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 jQuery(document).ready(function ($) {
+    $('#checkout-button').on('click', function (e) {
+        e.preventDefault();
+
+        // Получаем email зарегистрированного пользователя
+        $.ajax({
+            url: ajax_object.ajax_url,
+            method: 'GET',
+            data: {
+                action: 'get_user_email' // Имя действия для обработки на сервере
+            },
+            success: function (response) {
+                if (response.success) {
+                    // Заполняем поле email в форме
+                    $('#email_user').val(response.data.email);
+                } else {
+                    console.error('Ошибка получения email:', response.data.message);
+                }
+            },
+            error: function () {
+                console.error('AJAX ошибка:', error);
+            }
+        });
+    });
+
     $('#submit-button').on('click', function (e) {
         e.preventDefault();
 

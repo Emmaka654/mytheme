@@ -6,8 +6,8 @@
 get_header(); ?>
 
 <div class="account-page">
-<!--определяем id текущей страницы-->
-    <?php $page_id = get_queried_object_id();
+    <!--определяем id текущей страницы-->
+    <?php $page_id = get_the_ID();
     $title = get_the_title($page_id);
     echo '<h1>' . esc_html($title) . '</h1>';
 
@@ -26,6 +26,7 @@ get_header(); ?>
         echo '<p>Ваш email: ' . esc_html($email) . '</p>';
         ?>
         <div id="user-orders"></div>
+        <div id="pagination"></div>
     <?php else: ?>
         <p>Пожалуйста, войдите, чтобы увидеть вашу информацию.</p>
     <?php endif; ?>
@@ -34,11 +35,13 @@ get_header(); ?>
 <?php get_footer(); ?>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Функция esc_js() используется для экранирования строки, чтобы она была безопасной для использования в JavaScript
+    // Выносим функцию loadOrders в глобальную область видимости
+    function loadOrders(page) {
         const userEmail = '<?php echo esc_js(wp_get_current_user()->user_email); ?>';
-        // fetch: Это встроенная функция JavaScript, которая позволяет выполнять HTTP-запросы.
-        fetch('<?php echo esc_url(rest_url('custom/v1/orders')); ?>', {
+        const perPage = 8; // Количество заказов на странице
+
+        // Передаем параметры запроса
+        fetch(`<?php echo esc_url(rest_url('custom/v1/orders')); ?>?page=${page}&per_page=${perPage}`, {
             method: 'GET',
             credentials: 'include', // Включаем куки для авторизации
             headers: {
@@ -47,7 +50,6 @@ get_header(); ?>
             }
         })
             .then(response => {
-                // Проверяем, успешен ли ответ
                 if (!response.ok) {
                     throw new Error('Ошибка сети: ' + response.status);
                 }
@@ -55,6 +57,8 @@ get_header(); ?>
             })
             .then(data => {
                 const ordersDiv = document.getElementById('user-orders');
+                const paginationDiv = document.getElementById('pagination');
+
                 if (Array.isArray(data) && data.length === 0) {
                     ordersDiv.innerHTML = '<p>У вас нет заказов.</p>';
                 } else if (Array.isArray(data) && data.length > 0) {
@@ -65,11 +69,25 @@ get_header(); ?>
                     });
                     ordersHtml += '</ul>';
                     ordersDiv.innerHTML = ordersHtml;
+
+                    // Отображаем кнопки пагинации
+                    let paginationHtml = '';
+                    if (page > 1) {
+                        paginationHtml += `<button onclick="loadOrders(${page - 1})">Предыдущая</button>`;
+                    }
+                    if (data.length === perPage) {
+                        paginationHtml += `<button onclick="loadOrders(${page + 1})">Следующая</button>`;
+                    }
+                    paginationDiv.innerHTML = paginationHtml;
                 } else {
-                    // Обработка случая, если data не является массивом
                     ordersDiv.innerHTML = '<p>Произошла ошибка при получении заказов.</p>';
                 }
             })
             .catch(error => console.error('Ошибка:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Загружаем первую страницу при загрузке страницы
+        loadOrders(1);
     });
 </script>

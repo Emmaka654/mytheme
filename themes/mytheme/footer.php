@@ -35,6 +35,18 @@
 
 <div id="order-response"></div>
 
-<div id="registration-container" style="display: none;"><?php custom_registration_function(); ?></div>
-<div id="authorization-container" style="display: none;"><?php custom_authorization_function(); ?></div>
+<div id="registration-container" style="display: none;"><?php
+    if (function_exists('custom_registration_function')) {
+        custom_registration_function();
+    } else {
+        echo "Функция регистрации не найдена";
+    } ?>
+</div>
+<div id="authorization-container" style="display: none;"><?php
+    if (function_exists('custom_authorization_function')) {
+        custom_authorization_function();
+    } else {
+        echo "Функция авторизации не найдена";
+    } ?>
+</div>
 </html>

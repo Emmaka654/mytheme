@@ -20,7 +20,13 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <?php echo custom_auth_buttons(); // Вызов функции для отображения кнопок ?>
+        <?php
+        if (function_exists('custom_auth_buttons')) {
+            echo custom_auth_buttons(); // Вызов функции для отображения кнопок
+        } else {
+            echo 'Функция отображения кнопок не найдена';
+        }
+        ?>
         <div class="collapse navbar-collapse" id="navbarNav">
             <?php
             wp_nav_menu(array(

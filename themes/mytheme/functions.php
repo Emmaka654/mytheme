@@ -228,16 +228,6 @@ function get_user_email()
 add_action('wp_ajax_get_user_email', 'get_user_email');
 add_action('wp_ajax_nopriv_get_user_email', 'get_user_email');
 
-function add_account_menu_item($items, $args)
-{
-    if (is_user_logged_in()) {
-        $items .= '<li><a href="' . home_url('/личный-кабинет/') . '">Личный кабинет</a></li>';
-    }
-    return $items;
-}
-
-add_filter('wp_nav_menu_items', 'add_account_menu_item', 20, 2);
-
 // создание маршрута
 add_action('rest_api_init', function () {
 
@@ -277,8 +267,20 @@ function get_user_orders(WP_REST_Request $request)
         return new WP_Error('invalid_email', 'Email не соответствует текущему пользователю', array('status' => 402));
     }
 
+    // Получаем параметры пагинации из запроса
+    $page = $request->get_param('page') ? intval($request->get_param('page')) : 1;
+    $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 2;
+
+    // Рассчитываем offset для пагинации
+    //Без offset сервер всегда будет возвращать одни и те же записи (например, первые 2 заказа).
+    // С offset сервер "пропускает" записи, которые уже были показаны на предыдущих страницах, и возвращает только те, которые должны быть на текущей странице.
+    $offset = ($page - 1) * $per_page;
+
+    // Аргументы для запроса заказов
     $args = array(
         'post_type' => 'custom_order',
+        'posts_per_page' => $per_page, // Количество заказов на странице
+        'offset' => $offset, // Смещение для пагинации
         'meta_query' => array(
             array(
                 'key' => 'email_user', // Ключ метаполя
@@ -306,6 +308,6 @@ function get_user_orders(WP_REST_Request $request)
         }
         return new WP_REST_Response($response_data, 200); // Возвращаем массив заказов
     } else {
-        return new WP_REST_Response(array('message' => 'Заказ с таким email не найден.'), 404); // Если заказы не найдены
+        return new WP_REST_Response(array('message' => 'Заказы не найдены.'), 404); // Если заказы не найдены
     }
 }

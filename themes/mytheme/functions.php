@@ -178,7 +178,26 @@ function submit_order()
     // Получаем данные из формы
     $fio_user = sanitize_text_field($form_data['fio_user']);
     $email_user = sanitize_email($form_data['email_user']);
-    $products = array_keys($cart);
+    $products = [];
+
+    // Получаем информацию о каждом товаре из корзины
+    foreach ($cart as $product_id => $quantity) {
+        $product = get_post($product_id); // Получаем данные товара
+        if ($product) {
+            $products[] = [
+                'id' => $product_id,
+                'name' => $product->post_title, // Название товара
+                'image' => get_the_post_thumbnail_url($product_id, 'thumbnail'), // Изображение
+                'description' => $product->post_content, // Описание
+                'price' => get_post_meta($product_id, 'price', true), // Цена
+                'size' => get_post_meta($product_id, 'size', true), // Размер
+                'color' => get_post_meta($product_id, 'color', true), // Цвет
+                'rating' => get_post_meta($product_id, 'product_rating', true), // Рейтинг
+                'quantity' => $quantity, // Количество
+            ];
+        }
+    }
+
     // Проверяем, что данные были переданы
     if (!empty($fio_user) && !empty($email_user) && !empty($products)) {
         // Создаем новый заказ (пост типа ORDER)
@@ -192,7 +211,7 @@ function submit_order()
         if ($order_id) {
             update_field('fio_user', $fio_user, $order_id);
             update_field('email_user', $email_user, $order_id);
-            update_field('products', $products, $order_id);
+            update_post_meta($order_id, 'products', $products);
 
             $response = [
                 'success' => true,

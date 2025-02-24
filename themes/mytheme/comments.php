@@ -1,4 +1,4 @@
-<!--Комментарии-->
+<!--Страница комментарии-->
 <div id="comments" class="comments-area">
 
     <?php

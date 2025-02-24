@@ -1,3 +1,4 @@
+<!--Комментарии-->
 <div id="comments" class="comments-area">
 
     <?php

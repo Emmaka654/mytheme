@@ -15,7 +15,7 @@ add_action('after_setup_theme', 'mytheme_setup');
 function my_theme_enqueue_styles()
 {
     // Подключение стилей
-    wp_enqueue_style('my-style', get_stylesheet_directory_uri() . './style.css');
+    wp_enqueue_style('my-style', get_stylesheet_directory_uri() . '/style.css');
     wp_enqueue_style('bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
 }
 

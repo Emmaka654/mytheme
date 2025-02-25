@@ -10,7 +10,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand mx-auto" href="<?php echo home_url(); ?>"><?php echo get_bloginfo('name'); ?></a>
-        <a href="<?php echo home_url('/products/'); ?>">Каталог</a>
+        <a href="<?php echo home_url('/products/'); ?>">Catalog</a>
         <a href="#" id="cart-icon">
             <img src="<?php echo home_url('/wp-content/uploads/2024/11/cart-1.png'); ?>" alt="Корзина"
                  style="width: 50px; height: auto;">

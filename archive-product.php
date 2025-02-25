@@ -51,7 +51,7 @@ if ($query->have_posts()) : ?>
 
     </div>
 <?php else : ?>
-    <p><?php _e('Товары не найдены.'); ?></p>
+    <p><?php _e('No products.'); ?></p>
 <?php endif; ?>
 
 <aside class="sidebar">
